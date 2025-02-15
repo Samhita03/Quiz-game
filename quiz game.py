@@ -20,6 +20,7 @@ option_box1=Rect(20,280,265,130)
 option_box2=Rect(295,280,265,130)
 option_box3=Rect(20,420,265,130)
 option_box4=Rect(295,420,265,130)
+options=[option_box1,option_box2,option_box3,option_box4]
 
 def draw():
     screen.fill("black")
@@ -33,12 +34,12 @@ def draw():
     screen.draw.filled_rect(skip_button,"green")
 
     screen.draw.textbox("welcome to quiz game",message_box,color="black")
-    screen.draw.textbox("question",question_box,color="black")
-    screen.draw.textbox("answer",option_box1,color="black")
-    screen.draw.textbox("answer",option_box2,color="black")
-    screen.draw.textbox("answer",option_box3,color="black")
-    screen.draw.textbox("answer",option_box4,color="black")
-    screen.draw.textbox("time",timer_box,color="black")
+    screen.draw.textbox(question[0],question_box,color="black")
+    screen.draw.textbox(question[1],option_box1,color="black")
+    screen.draw.textbox(question[2],option_box2,color="black")
+    screen.draw.textbox(question[3],option_box3,color="black")
+    screen.draw.textbox(question[4],option_box4,color="black")
+    screen.draw.textbox(str(timer),timer_box,color="black")
     screen.draw.textbox("skip",skip_button,color="black")
 def update():
     pass
@@ -49,9 +50,51 @@ def readquestionfile():
     questions=file.readlines()
     totalquestions=len(questions)
     file.close()
+
+def readnextquestion():
+    global question
     question=questions[currentquestion].split(",")
     print(question)
 
 readquestionfile()
+readnextquestion()
+
+def on_mouse_down(pos):
+    global score
+    optionnumber=1
+    for option in options:
+        if option.collidepoint(pos):
+            if optionnumber==int(question[5]):
+                correctanswer()
+                score=score+1
+            else:
+                game_over()
+        optionnumber=optionnumber+1
+    if skip_button.collidepoint(pos):
+        correctanswer()
+        
+def correctanswer():
+    global timer, score, currentquestion
+    currentquestion=currentquestion+1
+    if currentquestion>=11:
+        game_over()
+    else:
+        readnextquestion()
+    timer=10
+def game_over():
+    global gameover
+    gameover=True
+
+def reducetime():
+    global timer
+    if timer>0:
+        timer=timer-1
+    else:
+        gameover()
+clock.schedule_interval(reducetime,1)
+
+
+
+
 
 pgzrun.go()
