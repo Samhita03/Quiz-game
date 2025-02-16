@@ -83,14 +83,17 @@ def correctanswer():
     timer=10
 def game_over():
     global gameover
+    global question
     gameover=True
+    question=["game over. Your score is"+str(score),"-","-","-","-","5"]
+
 
 def reducetime():
     global timer
     if timer>0:
         timer=timer-1
     else:
-        gameover()
+        game_over()
 clock.schedule_interval(reducetime,1)
 
 
